@@ -68,3 +68,4 @@ venv*
 # Mac files
 .DS_Store
 .Python
+.idea

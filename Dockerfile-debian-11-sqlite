@@ -57,6 +57,7 @@ FROM debian:bullseye
 # Install bootstrap and configure dependencies. Currently requires virtualenv
 # rather than the more modern python3-venv (should be fixed).
 RUN apt-get update && apt-get install -y \
+emacs-nox \
 automake \
 git \
 nodejs \
@@ -164,9 +165,10 @@ USER www-data
 # version, so that local changes are immediately available to the running
 # container. Not as easy as it sounds. We have this working with docker-compose,
 # but still uses upstream MediaGoblin for the build.
-RUN git clone --depth=1 git://git.savannah.gnu.org/mediagoblin.git --branch master .
+#RUN git clone --depth=1 git://git.savannah.gnu.org/mediagoblin.git --branch master .
 # RUN git clone --depth=1 https://gitlab.com/BenSturmfels/mediagoblin.git --branch master .
-RUN git show --oneline --no-patch
+#RUN git show --oneline --no-patch
+COPY --chown=www-data:www-data . /opt/mediagoblin
 
 RUN ./bootstrap.sh
 RUN ./configure
@@ -193,6 +195,7 @@ RUN echo '[[mediagoblin.media_types.audio]]' >> mediagoblin.ini
 RUN echo '[[mediagoblin.media_types.video]]' >> mediagoblin.ini
 RUN echo '[[mediagoblin.media_types.raw_image]]' >> mediagoblin.ini
 RUN echo '[[mediagoblin.media_types.pdf]]' >> mediagoblin.ini
+RUN sed -ie 's/allow_registration = true/allow_registration = false/' mediagoblin.ini
 
 # Prepare the SQLite database.
 #
